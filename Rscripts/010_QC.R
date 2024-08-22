@@ -35,7 +35,7 @@ source(file.path("Rscripts", "011_DoubletFinder.R"))
 seu <- merge(x = seu_list[[1]], y = seu_list[2:length(seu_list)], add.cell.ids = sample_name)
 rm(seu_list)
 seu@meta.data <- seu@meta.data[,c(1:3,7)]
-seu$orig.ident <- factor(seu$orig.ident, levels = c("WT", "PT", "PC", "PTC"))
+seu$orig.ident <- factor(seu$orig.ident, levels = sample_name)
 seu$batch <- "2nd"
 seu$batch[seu$orig.ident == "PTC"] <- "1st"
 seu$batch <- factor(seu$batch, levels = c("1st", "2nd"))

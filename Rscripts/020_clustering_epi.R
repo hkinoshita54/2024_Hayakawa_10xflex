@@ -48,6 +48,7 @@ sapply(features, save_fp, seu, fp_path)
 
 # Check markers interactively when necessary
 # seu <- JoinLayers(seu)
+Idents(seu) <- "seurat_clusters"
 markers <- FindAllMarkers(seu, only.pos = TRUE)
 add_feat <- "Cd38"
 FeaturePlot(seu, features = add_feat, cols = c("lightgrey","darkred"), 
