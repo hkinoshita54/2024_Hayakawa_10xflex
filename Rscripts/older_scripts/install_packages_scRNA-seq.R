@@ -25,6 +25,6 @@ install.packages("msigdbr")
 BiocManager::install("glmGamPoi")
 BiocManager::install("DESeq2")
 BiocManager::install("fgsea")
-remotes::install_github("satijalab/seurat-wrappers", quiet = TRUE)
+# remotes::install_github("satijalab/seurat-wrappers", quiet = TRUE) # did not work
 devtools::install_github("immunogenomics/presto")
 remotes::install_github('chris-mcginnis-ucsf/DoubletFinder')
