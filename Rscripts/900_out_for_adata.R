@@ -1,13 +1,16 @@
+# Modify output directory and seurat object to read in
+
 # load packages ----
 library(tidyverse)
 library(Seurat)
 
 # output directory
-out_dir <- file.path("out_data")
+description <- "021_epiPTC"
+out_dir <- file.path("out_data", description)
 fs::dir_create(out_dir)
 
 # load data
-seu <- readRDS(file.path("RDSfiles", "seu_020_epi.RDS"))
+seu <- readRDS(file.path("RDSfiles", "seu_021_epiPTC.RDS"))
 
 # convert Seurat object to anndata manually following the tutorial below ----
 # https://smorabit.github.io/tutorials/8_velocyto/

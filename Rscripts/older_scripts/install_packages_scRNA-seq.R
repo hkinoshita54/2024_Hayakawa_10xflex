@@ -28,3 +28,9 @@ BiocManager::install("fgsea")
 # remotes::install_github("satijalab/seurat-wrappers", quiet = TRUE) # did not work
 devtools::install_github("immunogenomics/presto")
 remotes::install_github('chris-mcginnis-ucsf/DoubletFinder')
+
+# Additional packages
+BiocManager::install("escape")
+BiocManager::install("clusterProfiler")
+BiocManager::install("org.Mm.eg.db")
+BiocManager::install("ReactomePA")
