@@ -5,12 +5,12 @@ library(tidyverse)
 library(Seurat)
 
 # output directory
-description <- "021_epiPTC"
+description <- "021.1_clustering_epi_PC&PTC"
 out_dir <- file.path("out_data", description)
 fs::dir_create(out_dir)
 
 # load data
-seu <- readRDS(file.path("RDSfiles", "seu_021_epiPTC.RDS"))
+seu <- readRDS(file.path("RDSfiles", "seu_020.1_epi.RDS"))
 
 # convert Seurat object to anndata manually following the tutorial below ----
 # https://smorabit.github.io/tutorials/8_velocyto/
@@ -34,3 +34,4 @@ write.table(
   data.frame('gene' = rownames(counts_matrix)), file = file.path(out_dir, 'seu_gene_names.csv'),
   quote = F, row.names = F, col.names = F
 )
+

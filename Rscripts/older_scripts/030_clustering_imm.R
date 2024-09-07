@@ -155,6 +155,13 @@ ggsave("celltype.png", path = plot_path, width = 4.5, height = 3, units = "in", 
 # Dot plot
 Idents(seu) <- "celltype"
 markers <- FindAllMarkers(seu, only.pos = TRUE)
+markers %>%
+  group_by(cluster) %>%
+  # dplyr::filter(avg_log2FC > 1) %>%
+  slice_head(n = 1000) %>%
+  ungroup() -> markers
+openxlsx2::write_xlsx(markers, file.path(res_path, "markers.xlsx"))
+
 features <- c("Cd79a", "Jchain", "Cd4", "Cd8a", "Foxp3", "Trdc", 
               "Gata3", "Top2a", "C1qb", "Vcan", "Il1b", "Clec9a", "Siglech", "S100a8", "Kit")
 DotPlot(seu, group.by = "celltype", features = features) + RotatedAxis()
@@ -164,3 +171,21 @@ ggsave("sample.png", path = plot_path, width = 4, height = 3, units = "in", dpi 
 
 saveRDS(seu, file = file.path("RDSfiles", "seu_030_imm.RDS"))
 
+
+# Check markers by feature plots following Pan et. al. Nature 2024 ----
+fp_path <- file.path(plot_path, "no_int", "feature_plot")
+# fs::dir_create(c(fp_path))
+features <- readLines(file.path("aux_data", "gene_set", "annotation", "additional_imm_markers.txt"))
+
+save_fp <- function(feature, seu, path){
+  tryCatch({
+    p <- FeaturePlot(seu, features = feature, cols = c("lightgrey","darkred"), label = TRUE, repel = TRUE) +
+      NoAxes() + NoLegend()
+    ggsave(paste0(feature, ".png"), plot = p, path = path,
+           width = 4, height = 4, units = "in", dpi = 150)
+  }, error = function(e){cat("ERROR :", conditionMessage(e), "\n")})
+}
+sapply(features, save_fp, seu, fp_path)
+## not necessary to change the annotation
+
+# 

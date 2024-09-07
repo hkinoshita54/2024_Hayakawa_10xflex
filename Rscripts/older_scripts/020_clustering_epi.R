@@ -50,7 +50,7 @@ sapply(features, save_fp, seu, fp_path)
 # seu <- JoinLayers(seu)
 Idents(seu) <- "seurat_clusters"
 markers <- FindAllMarkers(seu, only.pos = TRUE)
-add_feat <- "Cd38"
+add_feat <- "Tgfbr2"
 FeaturePlot(seu, features = add_feat, cols = c("lightgrey","darkred"), 
             # min.cutoff = "q25", max.cutoff = "q75",
             label = TRUE, repel = TRUE

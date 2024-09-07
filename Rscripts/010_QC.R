@@ -85,7 +85,7 @@ save_fp <- function(feature, seu, path){
     p <- FeaturePlot(seu, features = feature, cols = c("lightgrey","darkred"), label = TRUE, repel = TRUE) +
       NoAxes() + NoLegend()
     ggsave(paste0(feature, ".png"), plot = p, path = path, 
-         width = 4, height = 4, units = "in", dpi = 150)
+         width = 3, height = 3, units = "in", dpi = 150)
   }, error = function(e){cat("ERROR :", conditionMessage(e), "\n")})
 }
 sapply(features, save_fp, seu, fp_path)

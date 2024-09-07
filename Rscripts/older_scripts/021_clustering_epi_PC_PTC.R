@@ -4,6 +4,7 @@ analysis_step <- "021_clustering_epi_PC_PTC"
 
 # load packages ----
 library(tidyverse)
+library(ggrepel)
 library(readxl)
 library(Seurat)
 library(clusterProfiler)
@@ -20,7 +21,7 @@ fs::dir_create(c(plot_path, res_path))
 seu <- readRDS(file.path("RDSfiles", "seu_020_epi.RDS"))
 seu <- subset(seu, subset = celltype %in% c("Epi-PC", "Epi-PTC"))
 
-# Clustering
+# Clustering ----
 recluster = function(seu_obj, npcs, res){
   seu[["RNA"]]$scale.data <- NULL
   seu[["RNA"]]$data <- NULL
@@ -59,8 +60,6 @@ sapply(features, save_fp, seu, fp_path)
 
 # Check markers interactively when necessary
 markers <- FindAllMarkers(seu, only.pos = TRUE)
-
-
 
 # Adjust resolution to divide c2 into prolif and not ----
 plot_path <- file.path(plot_path, "res0.5")
@@ -112,20 +111,18 @@ markers %>%
 DotPlot(seu, group.by = "celltype_2", features = top5$gene) + RotatedAxis()
 ggsave("dotplot.png", path = plot_path, width = 10, height = 4, units = "in", dpi = 150)
 
-# what is the PTC4?
+# what is PTC4?
 markers_PTC4 <- FindMarkers(seu, ident.1 = "PTC4")
 VlnPlot(seu, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3, pt.size = 0)
 ggsave("vln_QC_.png", path = plot_path, width = 10, height = 4, units = "in", dpi = 150)
 ## nFeature_RNA low, no actually positive markers > low quality cells??
 
 # cluster profiler ----
+# https://zenn.dev/rchiji/books/fdd68b85675c8d/viewer/d4b475
 gene_list <- split(markers$gene, markers$cluster)
 
 for(i in names(gene_list)){
-  gene_list[[i]] <- bitr(gene_list[[i]], 
-                         fromType = "SYMBOL", 
-                         toType = "ENTREZID", 
-                         OrgDb = "org.Mm.eg.db")
+  gene_list[[i]] <- bitr(gene_list[[i]], fromType = "SYMBOL", toType = "ENTREZID", OrgDb = "org.Mm.eg.db")
   gene_list[[i]] <- gene_list[[i]]$ENTREZID
 }
 gene_list[[7]] <- NULL    # remove PTC4 from the analysis
@@ -186,19 +183,31 @@ ggsave("GSEA_H_hm.png", path = plot_path, width = 5, height = 8, units = "in", d
 
 # GSVA ----
 # CAUTION! It may take a long time!
-seu <- runEscape(seu, method = "GSVA", gene.sets = H,
-                 groups = 5000, min.size = 15, new.assay.name = "GSVA_H",
-                 BPPARAM = SnowParam(workers = 2))
-seu <- performNormalization(seu, assay = "GSVA_H", gene.sets = H, 
-                            scale.factor = seu$nFeature_RNA)
-
-gs_H <- FindAllMarkers(seu, assay = "GSVA_H_normalized", min.pct = 0, logfc.threshold = 0)
-openxlsx2::write_xlsx(gs_H, file.path(res_path, "GSVA_H.xlsx"))
-
-heatmapEnrichment(seu, group.by = "ident", assay = "GSVA_H_normalized", gene.set.use = "all",
-                  scale = TRUE, cluster.rows = TRUE, cluster.columns = TRUE)
-ggsave("GSVA_H_hm.png", path = plot_path, width = 5, height = 10, units = "in", dpi = 150)
+# seu <- runEscape(seu, method = "GSVA", gene.sets = H,
+#                  groups = 5000, min.size = 15, new.assay.name = "GSVA_H",
+#                  BPPARAM = SnowParam(workers = 2))
+# seu <- performNormalization(seu, assay = "GSVA_H", gene.sets = H, 
+#                             scale.factor = seu$nFeature_RNA)
+# 
+# gs_H <- FindAllMarkers(seu, assay = "GSVA_H_normalized", min.pct = 0, logfc.threshold = 0)
+# openxlsx2::write_xlsx(gs_H, file.path(res_path, "GSVA_H.xlsx"))
+# 
+# heatmapEnrichment(seu, group.by = "ident", assay = "GSVA_H_normalized", gene.set.use = "all",
+#                   scale = TRUE, cluster.rows = TRUE, cluster.columns = TRUE)
+# ggsave("GSVA_H_hm.png", path = plot_path, width = 5, height = 10, units = "in", dpi = 150)
 
 
 # save data ----
-saveRDS(seu, file = file.path("RDSfiles", "seu_021_epiPTC.RDS"))
+saveRDS(seu, file = file.path("RDSfiles", "seu_021_epi_PC_PTC.RDS"))
+
+
+# check it on the whole epithelium ----
+seu2 <- seu
+seu <- readRDS(file.path("RDSfiles", "seu_020_epi.RDS"))
+seu$celltype_2 <- as.character(seu$celltype)
+seu$celltype_2[colnames(seu2)] <- as.character(seu2$celltype_2)
+seu$celltype_2 <- factor(seu$celltype_2, levels = c(levels(seu$celltype)[-c(10:11)], levels(seu2$celltype_2)))
+Idents(seu) <- "celltype_2"
+DimPlot(seu, label = TRUE, repel = TRUE, cols = "alphabet") & NoAxes() & 
+  guides(color = guide_legend(override.aes = list(size = 3, alpha = 1), ncol = 2))
+ggsave("celltype_2_whole_epi.png", path = plot_path, width = 5, height = 3, units = "in", dpi = 150)

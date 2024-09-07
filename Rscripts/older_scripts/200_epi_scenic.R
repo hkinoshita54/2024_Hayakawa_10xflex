@@ -16,7 +16,7 @@ fs::dir_create(c(plot_path, res_path))
 seu <- readRDS(file.path("RDSfiles", "seu_020_epi.RDS"))
 
 # auc_mtx is exported from pySCENIC (5th iteration)
-auc_mtx <- read_tsv(file = file.path("int_data", "auc_mtx.txt")) %>% 
+auc_mtx <- read_tsv(file = file.path("int_data", "pyscenic_nig-sc", "Epithelial", "auc_mtx.txt")) %>% 
   column_to_rownames(var = "...1") %>% 
   as.matrix %>% t()
 seu[["scenicAUC"]] <- CreateAssayObject(data = auc_mtx)
@@ -25,9 +25,9 @@ DefaultAssay(seu) <- "scenicAUC"
 # clustering based on auc_mtx (w/o pca)
 seu <- RunUMAP(seu, dims = NULL, features = rownames(seu), reduction = NULL, reduction.name = "umap_scenic", verbose = FALSE)
 seu <- FindNeighbors(seu, features = rownames(seu), reduction = NULL, dims = NULL, verbose = FALSE)
-seu <- FindClusters(seu, resolution = 1, verbose = FALSE)
+seu <- FindClusters(seu, resolution = 2, verbose = FALSE)
 
-DimPlot(seu, label = TRUE, repel = TRUE, cols = "alphabet") + NoAxes()
+DimPlot(seu, label = TRUE, repel = TRUE, cols = "polychrome") + NoAxes()
 ggsave("cluster.png", path = plot_path, width = 4, height = 3, units = "in", dpi = 150)
 DimPlot(seu, group.by = "celltype", label = TRUE, repel = TRUE, cols = "alphabet") + NoAxes()
 ggsave("celltype.png", path = plot_path, width = 4, height = 3, units = "in", dpi = 150)
@@ -38,17 +38,39 @@ Idents(seu) <- "celltype"
 markers <- FindAllMarkers(seu, only.pos = TRUE)
 openxlsx2::write_xlsx(markers, file.path(res_path, paste0("regulon_celltype.xlsx")))
 
+# check RNA markers of scenic identified clusters
+Idents(seu) <- "seurat_clusters"
+DefaultAssay(seu) <- "RNA"
+DimPlot(seu, label = TRUE, repel = TRUE, cols = "polychrome") + NoAxes()
+ggsave("scenic_cluster_on_Seurat_UMAP.png", path = plot_path, width = 4, height = 3, units = "in", dpi = 150)
+
+markers <- FindAllMarkers(seu, only.pos = TRUE)
+openxlsx2::write_xlsx(markers, file.path(res_path, paste0("markers_scenic_clusters.xlsx")))
+
 Idents(seu) <- "seurat_clusters"
 DefaultAssay(seu) <- "RNA"
 markers <- FindAllMarkers(seu, only.pos = TRUE)
 
-add_feat <- "Mki67"
+# feature plot
+fp_path <- file.path("plot", analysis_step, "feature_plot")
+fs::dir_create(fp_path)
+DefaultAssay(seu) <-"scenicAUC"
+
+add_feat <- "Mafg(+)"
 FeaturePlot(seu, features = add_feat, cols = c("lightgrey","darkred"), 
             # min.cutoff = "q25", max.cutoff = "q75",
             label = TRUE, repel = TRUE
 ) + NoAxes() + NoLegend()
 ggsave(paste0(add_feat, ".png"), path = fp_path, width = 4, height = 4, units = "in", dpi = 150)
 rm(add_feat)
+
+
+
+
+
+
+
+
 
 Idents(seu) <- "celltype"
 saveRDS(seu, file = file.path("RDSfiles", "seu_200_epi_scenic.RDS"))

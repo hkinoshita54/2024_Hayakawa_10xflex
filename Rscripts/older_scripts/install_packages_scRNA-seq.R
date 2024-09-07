@@ -34,3 +34,11 @@ BiocManager::install("escape")
 BiocManager::install("clusterProfiler")
 BiocManager::install("org.Mm.eg.db")
 BiocManager::install("ReactomePA")
+BiocManager::install(c('BiocGenerics', 'DelayedArray', 'DelayedMatrixStats',
+                       'limma', 'lme4', 'S4Vectors', 'SingleCellExperiment',
+                       'SummarizedExperiment', 'batchelor', 'HDF5Array',
+                       'terra', 'ggrastr'))
+devtools::install_github('cole-trapnell-lab/monocle3')
+BiocManager::install("sva")
+devtools::install_local("/Users/kinoshitahiroto/Downloads/CytoTRACE_0.3.3.tar.gz")
+devtools::install_github("digitalcytometry/cytotrace2", subdir = "cytotrace2_r")
