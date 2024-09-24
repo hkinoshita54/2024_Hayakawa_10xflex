@@ -73,14 +73,15 @@ sapply(add_feat, save_fp, seu, fp_path)
 seu$celltype <- ""
 seu$celltype[seu$seurat_clusters %in% c(0,2,3,5,6,8,12,16,17,18,24,26,29)] <- "Fib."
 seu$celltype[seu$seurat_clusters %in% c(4,7,13,15,20,27)] <- "Myo."
-seu$celltype[seu$seurat_clusters %in% c(1,9,11,19,21)] <- "Endo."
+seu$celltype[seu$seurat_clusters %in% c(1,11,19,21)] <- "BEC"
+seu$celltype[seu$seurat_clusters %in% c(9)] <- "LEC"
 seu$celltype[seu$seurat_clusters %in% c(10)] <- "Peri."
 seu$celltype[seu$seurat_clusters %in% c(14)] <- "Glia."
 seu$celltype[seu$seurat_clusters %in% c(22)] <- "Adipo."
 seu$celltype[seu$seurat_clusters %in% c(23)] <- "Meso."
 seu$celltype[seu$seurat_clusters %in% c(25)] <- "ICC"
 seu$celltype[seu$seurat_clusters %in% c(28)] <- "Neuro."
-seu$celltype <- factor(seu$celltype, levels = c("Fib.", "Myo.", "Endo.", "Peri.", "Glia.", "Adipo.", "Meso.", "ICC", "Neuro."))
+seu$celltype <- factor(seu$celltype, levels = c("Fib.", "Myo.", "BEC", "LEC", "Peri.", "Glia.", "Adipo.", "Meso.", "ICC", "Neuro."))
 DimPlot(seu, group.by = "celltype", cols = "polychrome", label = TRUE, repel = TRUE) & NoAxes()
 ggsave("celltype.png", path = plot_path, width = 4, height = 3, units = "in", dpi = 150)
 
@@ -93,7 +94,7 @@ markers %>%
   slice_head(n = 1000) %>%
   ungroup() -> markers
 openxlsx2::write_xlsx(markers, file.path(res_path, "markers.xlsx"))
-features <- c("Pdgfra", "Myh11", "Pecam1", "Rgs5", "Sox10", "Plin1", "Msln", "Kit", "Snap25")
+features <- c("Pdgfra", "Myh11", "Pecam1", "Prox1", "Rgs5", "Sox10", "Plin1", "Msln", "Kit", "Snap25")
 DotPlot(seu, group.by = "celltype", features = features) + RotatedAxis()
 ggsave("dotplot.png", path = plot_path, width = 5.5, height = 4, units = "in", dpi = 150)
 

@@ -42,3 +42,17 @@ devtools::install_github('cole-trapnell-lab/monocle3')
 BiocManager::install("sva")
 devtools::install_local("/Users/kinoshitahiroto/Downloads/CytoTRACE_0.3.3.tar.gz")
 devtools::install_github("digitalcytometry/cytotrace2", subdir = "cytotrace2_r")
+devtools::install_github("saeyslab/nichenetr")
+
+devtools::install_github("jinworks/CellChat")
+devtools::install_github("renozao/NMF@devel")
+devtools::install_github("jokergoo/circlize")
+devtools::install_github("jokergoo/ComplexHeatmap")
+
+BiocManager::install("biomaRt")
+BiocManager::install("densvis")
+devtools::install_github("califano-lab/PISCES")
+
+BiocManager::install("decoupleR")
+BiocManager::install("OmnipathR")
+BiocManager::install("viper")

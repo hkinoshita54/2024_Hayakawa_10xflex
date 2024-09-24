@@ -10,6 +10,7 @@ library(Seurat)
 library(clusterProfiler)
 library(ReactomePA)
 library(escape)
+library(org.Mm.eg.db)
 
 # Make directories ----
 # fs::dir_create(c("plot", "result", "RDSfiles", "Rscripts"))
@@ -82,7 +83,7 @@ sapply(features, save_fp, seu, fp_path)
 add_feat <- c("Mmp13")
 sapply(add_feat, save_fp, seu, fp_path)
 
-add_feat <- "Pgc"
+add_feat <- "Islr"
 FeaturePlot(seu, features = add_feat, cols = c("lightgrey","darkred")) + NoAxes() + NoLegend()
 ggsave(paste0(add_feat, ".png"), path = fp_path, width = 3, height = 3, units = "in", dpi = 150)
 

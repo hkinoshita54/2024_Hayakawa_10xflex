@@ -10,6 +10,7 @@ library(Seurat)
 library(clusterProfiler)
 library(ReactomePA)
 library(escape)
+library(org.Mm.eg.db)
 
 # Make directories ----
 # fs::dir_create(c("plot", "result", "RDSfiles", "Rscripts"))
@@ -71,14 +72,14 @@ ggsave(paste0(add_feat, ".png"), path = fp_path, width = 3, height = 3, units = 
 
 # Add celltype annotation and save the Seurat object ----
 seu$celltype_2 <- ""
-seu$celltype_2[seu$seurat_clusters %in% c(5)] <- "PT1"
-seu$celltype_2[seu$seurat_clusters %in% c(4)] <- "PT2"
-seu$celltype_2[seu$seurat_clusters %in% c(1,8)] <- "PT3"
+seu$celltype_2[seu$seurat_clusters %in% c(5)] <- "PC1"
+seu$celltype_2[seu$seurat_clusters %in% c(4)] <- "PC2"
+seu$celltype_2[seu$seurat_clusters %in% c(1,8)] <- "PC3"
 seu$celltype_2[seu$seurat_clusters %in% c(6)] <- "PTC1"
 seu$celltype_2[seu$seurat_clusters %in% c(3)] <- "PTC2"
 seu$celltype_2[seu$seurat_clusters %in% c(0)] <- "PTC3"
 seu$celltype_2[seu$seurat_clusters %in% c(2,7)] <- "PTC4"
-seu$celltype_2 <- factor(seu$celltype_2, levels = c("PT1", "PT2", "PT3", "PTC1", "PTC2", "PTC3", "PTC4"))
+seu$celltype_2 <- factor(seu$celltype_2, levels = c("PC1", "PC2", "PC3", "PTC1", "PTC2", "PTC3", "PTC4"))
 DimPlot(seu, group.by = "celltype_2", cols = "polychrome", label = TRUE, repel = TRUE) & NoAxes()
 ggsave("celltype_2.png", path = plot_path, width = 4, height = 3, units = "in", dpi = 150)
 Idents(seu) <- "celltype_2"
@@ -187,6 +188,7 @@ ggsave("celltype_2_whole_epi.png", path = plot_path, width = 5, height = 3, unit
 
 # check regulons from SCENIC analysis in all epithelial cells ----
 # auc_mtx is exported from pySCENIC
+seu <- seu2
 auc_mtx <- read_tsv(file = file.path("int_data", "pyscenic_nig-sc", "epi_2", "auc_mtx.txt")) %>% 
   column_to_rownames(var = "...1") %>% 
   as.matrix %>% t()

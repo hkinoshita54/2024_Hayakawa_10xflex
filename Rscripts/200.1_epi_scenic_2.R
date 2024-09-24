@@ -52,11 +52,11 @@ fp_path <- file.path("plot", analysis_step, "feature_plot")
 fs::dir_create(fp_path)
 DefaultAssay(seu) <-"scenicAUC"
 
-add_feat <- "Ltf(+)"
+add_feat <- "Sox4(+)"
 FeaturePlot(seu, features = add_feat, cols = c("lightgrey","darkred"), 
             # min.cutoff = "q25", max.cutoff = "q75"
 ) + NoAxes() + NoLegend()
-ggsave(paste0(add_feat, ".png"), path = fp_path, width = 4, height = 4, units = "in", dpi = 150)
+ggsave(paste0(add_feat, ".png"), path = fp_path, width = 3, height = 3, units = "in", dpi = 150)
 
 Idents(seu) <- "celltype"
 saveRDS(seu, file = file.path("RDSfiles", "seu_200.1_epi_scenic.RDS"))
