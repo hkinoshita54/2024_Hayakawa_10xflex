@@ -101,3 +101,25 @@ ggsave("dotplot.png", path = plot_path, width = 4, height = 3.7, units = "in", d
 
 # Save RDS
 saveRDS(seu, file = file.path("RDSfiles", "seu_080_combined.RDS"))
+
+
+# Check markers by feature plots
+fp_path <- file.path(plot_path, "feature_plot")
+fs::dir_create(c(fp_path))
+
+# features <- readLines(file.path("aux_data", "gene_set", "annotation", "01_epi_markers.txt"))
+# sapply(features, save_fp, seu, fp_path)
+# 
+# add_feat <- c("Lrg1", "Cd38", "Cldn4", "Msln", "Cxcl5", "Pigr")
+# sapply(add_feat, save_fp, seu, fp_path)
+# 
+# markers <- FindAllMarkers(seu, only.pos = TRUE)
+# 
+# seu <- recluster(seu, npcs = 50, res = 2)
+DimPlot(seu, label = TRUE, repel = TRUE, cols = "polychrome") + NoAxes() +
+  guides(color = guide_legend(override.aes = list(size = 3, alpha = 1), ncol = 3))
+# ggsave("cluster_res2.png", path = plot_path, width = 5, height = 3, units = "in", dpi = 150)
+
+add_feat <- "Lrg1"
+FeaturePlot(seu, features = add_feat, cols = c("lightgrey","darkred")) + NoAxes() + NoLegend()
+ggsave(paste0(add_feat, ".png"), path = fp_path, width = 3, height = 3, units = "in", dpi = 150)

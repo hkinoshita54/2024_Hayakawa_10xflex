@@ -79,7 +79,7 @@ DimPlot(seu, label = TRUE, repel = TRUE, cols = "polychrome") + NoAxes() +
   guides(color = guide_legend(override.aes = list(size = 3, alpha = 1), ncol = 3))
 ggsave("cluster_res2.png", path = plot_path, width = 5, height = 3, units = "in", dpi = 150)
 
-add_feat <- "Chga"
+add_feat <- "Sh3bgrl3"
 FeaturePlot(seu, features = add_feat, cols = c("lightgrey","darkred")) + NoAxes() + NoLegend()
 ggsave(paste0(add_feat, ".png"), path = fp_path, width = 3, height = 3, units = "in", dpi = 150)
 
@@ -103,6 +103,7 @@ ggsave("celltype.png", path = plot_path, width = 4, height = 3, units = "in", dp
 # Dot plot
 Idents(seu) <- "celltype"
 markers <- FindAllMarkers(seu, only.pos = TRUE)
+openxlsx2::write_xlsx(markers, file.path(res_path, paste0("markers_epi_clusters.xlsx")))
 features <- c("Mki67", "Muc5ac", "Muc6", "Cblif", "Atp4b", "Chga", "Dclk1", "Krt5", "Ces2a", "Pigr")
 DotPlot(seu, group.by = "celltype", features = features) + RotatedAxis()
 ggsave("dotplot.png", path = plot_path, width = 5.5, height = 4, units = "in", dpi = 150)
