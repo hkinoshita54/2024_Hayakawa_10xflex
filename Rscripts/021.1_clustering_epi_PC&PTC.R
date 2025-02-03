@@ -100,7 +100,11 @@ markers %>%
   slice_head(n = 5) %>%
   ungroup() -> top5
 DotPlot(seu, group.by = "celltype_2", features = top5$gene) + RotatedAxis()
-ggsave("dotplot.png", path = plot_path, width = 10, height = 4, units = "in", dpi = 150)
+# wo PTC4
+seu_wo4 <- subset(seu, subset = celltype_2 == "PTC4", invert = T)
+DotPlot(seu_wo4, group.by = "celltype_2", features = top5$gene[1:30]) + RotatedAxis()
+ggsave("dotplot.png", path = plot_path, width = 9, height = 3.6, units = "in", dpi = 150)
+
 
 VlnPlot(seu, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3, pt.size = 0)
 ggsave("vln_QC_.png", path = plot_path, width = 10, height = 4, units = "in", dpi = 150)

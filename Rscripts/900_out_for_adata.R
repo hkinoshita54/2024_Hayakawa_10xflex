@@ -5,12 +5,12 @@ library(tidyverse)
 library(Seurat)
 
 # output directory
-description <- "021.1_clustering_epi_PC&PTC"
+description <- "080_combine_annotation"
 out_dir <- file.path("out_data", description)
 fs::dir_create(out_dir)
 
 # load data
-seu <- readRDS(file.path("RDSfiles", "seu_020.1_epi.RDS"))
+seu <- readRDS("RDSfiles/seu_080_combined.RDS")
 
 # convert Seurat object to anndata manually following the tutorial below ----
 # https://smorabit.github.io/tutorials/8_velocyto/

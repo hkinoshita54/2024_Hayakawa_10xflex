@@ -80,6 +80,9 @@ sapply(features, save_fp, seu, fp_path)
 features <- readLines(file.path("aux_data", "gene_set", "annotation", "CAF_markers.txt"))
 sapply(features, save_fp, seu, fp_path)
 
+features <- readLines("aux_data/gene_set/additional/niche_factors.txt")
+sapply(features, save_fp, seu, fp_path)
+
 add_feat <- c("Mmp13")
 sapply(add_feat, save_fp, seu, fp_path)
 
@@ -116,7 +119,12 @@ features = c("Cd55", "Cd34", "Pdgfra", "Adamdec1", "Pcolce2", "Pi16", "Cym", "Co
              "Cxcl12", "Il6", "Acta2", "Tagln", "Plau", "Mmp13", "Mki67", "Top2a")
 DotPlot(seu, group.by = "celltype_2", features = features) + RotatedAxis()
 ggsave("dotplot.png", path = plot_path, width = 7, height = 4, units = "in", dpi = 150)
-# VlnPlot(seu, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3, pt.size = 0)
+
+# niche factors
+features <- readLines("aux_data/gene_set/additional/niche_factors.txt")
+DotPlot(seu, group.by = "celltype_2", features = features) + RotatedAxis()
+ggsave("dotplot_niche_factors.png", path = plot_path, width = 13, height = 4, units = "in", dpi = 150)
+
 
 # save data
 saveRDS(seu, file = file.path("RDSfiles", "seu_042.1_fibroblast.RDS"))

@@ -1,5 +1,5 @@
 # Continued from 041_clustering_endothelial.R
-analysis_step <- "062_endothelial_DE_GSEA"
+analysis_step <- "062.2_endothelial_DE_GSEA_3"
 
 # load packages ----
 library(tidyverse)
@@ -45,14 +45,14 @@ ggsave("cluster.png", path = plot_path, width = 10, height = 3, units = "in", dp
 
 ## set genotype_celltype group
 seu$gt_ct <- paste(seu$orig.ident, seu$celltype_2, sep = "_")
-gt_ct_lev <- lapply(levels(seu$orig.ident), FUN = paste, levels(seu$celltype), sep = "_") %>% unlist()
+gt_ct_lev <- lapply(levels(seu$orig.ident), FUN = paste, levels(seu$celltype_2), sep = "_") %>% unlist()
 seu$gt_ct <- factor(seu$gt_ct, levels = gt_ct_lev)
 
-# DE TumEC vs BEC-rest ----
+# DE----
 ## set groups for DE analysis
 seu$de_group <- ""
-seu$de_group[seu$celltype_2 %in% c("TumEC1", "TumEC2", "TumEC3")] <- "test" 
-seu$de_group[seu$celltype_2 %in% c("ArtEC", "VenEC", "CapEC")] <- "ref"
+seu$de_group[seu$celltype_2 %in% c("TumEC1", "TumEC2")] <- "test" 
+seu$de_group[seu$celltype_2 %in% c("CapEC")] <- "ref"
 seu$de_group <- factor(seu$de_group, levels = c("ref", "test"))
 
 ## Wilcoxauc test
@@ -60,7 +60,7 @@ res <- presto::wilcoxauc(X = seu[["RNA"]]$data, y = seu$de_group, groups_use = c
 res <- res %>% filter(group == "test" & (pct_in != 0 | pct_out != 0))
 
 test_group <- "TumEC"
-ref_group <- "BEC_rest"
+ref_group <- "CapEC"
 description <- paste0(test_group, "_vs_", ref_group)
 openxlsx2::write_xlsx(res, file.path(res_path, paste0(description, ".xlsx")))
 
@@ -74,7 +74,6 @@ openxlsx2::write_xlsx(fgseaRes, file.path(res_path, paste0("GSEA_H_", descriptio
 
 ### KEGG, REACTOME, GO-BP and C6 with collapsePathways
 for (i in 2:5){run_fgsea(collections[[i]], names(collections)[i])}
-
 
 
 

@@ -1,6 +1,7 @@
 # Continued from 010.1_clustering_2.R
-# Without integration
-analysis_step <- "030.1_clustering_imm_2"
+# Without integration 
+# slightly modified the annotation from 030.1_clustering_imm_2
+analysis_step <- "030.2_clustering_imm_3"
 
 # load packages ----
 library(tidyverse)
@@ -43,19 +44,10 @@ save_fp <- function(feature, seu, path){
   }, error = function(e){cat("ERROR :", conditionMessage(e), "\n")})
 }
 
-# Clustering ----
-seu_all <- readRDS(file.path("RDSfiles", "seu_010_filt.RDS"))
-load(file.path("RDSfiles", "cellgroup_names_2.Rdata"))
-seu <- seu_all[, imm_names]
-seu$cellgroup <- "Imm."
-
-seu <- cluster(seu, npcs = 50, res = 2)
-DimPlot(seu, label = TRUE, repel = TRUE, cols = "polychrome") + NoAxes() +
-  guides(color = guide_legend(override.aes = list(size = 3, alpha = 1), ncol = 3))
-markers <- FindAllMarkers(seu, only.pos = TRUE) # no apparent contamination
-# seu <- subset(seu, subset = seurat_clusters %in% 20:22, invert = TRUE)
-# seu <- recluster(seu, npcs = 50, res = 2)
-
+# load data ----
+seu <- readRDS(file.path("RDSfiles", "seu_030.1_imm.RDS"))
+DimPlot(seu, group.by = "celltype", label = TRUE, repel = TRUE, cols = "polychrome") + NoAxes() +
+  guides(color = guide_legend(override.aes = list(size = 3, alpha = 1), ncol = 2))
 # adjust resolution
 seu <- FindClusters(seu, resolution = 3, verbose = FALSE)
 DimPlot(seu, label = TRUE, repel = TRUE, cols = "polychrome") + NoAxes() +
@@ -68,13 +60,10 @@ ggsave("sample.png", path = plot_path, width = 3.5, height = 3, units = "in", dp
 fp_path <- file.path(plot_path, "feature_plot")
 fs::dir_create(c(fp_path))
 
-features <- readLines(file.path("aux_data", "gene_set", "annotation", "02_imm_markers.txt"))
-sapply(features, save_fp, seu, fp_path)
+# features <- readLines(file.path("aux_data", "gene_set", "annotation", "02_imm_markers.txt"))
+# sapply(features, save_fp, seu, fp_path)
 
-features <- readLines(file.path("aux_data", "gene_set", "annotation", "additional_imm_markers.txt"))
-sapply(features, save_fp, seu, fp_path)
-
-add_feat <- "Inhba"
+add_feat <- "Ctla4"
 FeaturePlot(seu, features = add_feat, cols = c("lightgrey","darkred")) + NoAxes() + NoLegend()
 ggsave(paste0(add_feat, ".png"), path = fp_path, width = 3, height = 3, units = "in", dpi = 150)
 
@@ -89,35 +78,39 @@ seu$celltype[seu$seurat_clusters %in% c(8,17,28)] <- "gdT"
 seu$celltype[seu$seurat_clusters %in% c(36)] <- "NK"
 seu$celltype[seu$seurat_clusters %in% c(19)] <- "Prolif.T"
 seu$celltype[seu$seurat_clusters %in% c(20)] <- "ILC2"
-seu$celltype[seu$seurat_clusters %in% c(4,11,32,37,38,39)] <- "Macro."
-seu$celltype[seu$seurat_clusters %in% c(3,14,16,29)] <- "TAM"
-seu$celltype[seu$seurat_clusters %in% c(1,6,7,13,26)] <- "Mono."
+seu$celltype[seu$seurat_clusters %in% c(4,11,32,37,38,39)] <- "Mac."
+seu$celltype[seu$seurat_clusters %in% c(3,14,16,29)] <- "TAM1" #Apoe
+seu$celltype[seu$seurat_clusters %in% c(6)] <- "TAM2" #Inhba
+seu$celltype[seu$seurat_clusters %in% c(1,7,26)] <- "Mono1" #Vcan
+seu$celltype[seu$seurat_clusters %in% c(13)] <- "Mono2" #NOS
 seu$celltype[seu$seurat_clusters %in% c(15,25,30)] <- "cDC"
 seu$celltype[seu$seurat_clusters %in% c(34)] <- "pDC"
 seu$celltype[seu$seurat_clusters %in% c(0,9,12,24,33)] <- "TAN"
 seu$celltype[seu$seurat_clusters %in% c(27)] <- "Mast"
 seu$celltype <- factor(seu$celltype, levels = c("Bcell", "Plasma", "CD4-T", "CD8-T", "Treg", "gdT", "NK", "Prolif.T",
-                                                "ILC2", "Macro.", "TAM", "Mono.", "cDC", "pDC", "TAN", "Mast"))
+                                                "ILC2", "Mac.", "TAM1", "TAM2", "Mono1", "Mono2",
+                                                "cDC", "pDC", "TAN", "Mast"))
 DimPlot(seu, group.by = "celltype", cols = "polychrome", label = TRUE, repel = TRUE) + NoAxes() +
   guides(color = guide_legend(override.aes = list(size = 3, alpha = 1), ncol = 2))
-ggsave("celltype.png", path = plot_path, width = 4.5, height = 3, units = "in", dpi = 150)
+ggsave("celltype.png", path = plot_path, width = 5, height = 3, units = "in", dpi = 150)
 
 # Dot plot
 Idents(seu) <- "celltype"
 markers <- FindAllMarkers(seu, only.pos = TRUE)
-features <- c("Cd79a", "Jchain", "Cd4", "Cd8a", "Foxp3", "Trdc", "Nkg7", "Top2a",
-              "Gata3", "C1qb", "Il1b", "Batf3", "Siglech", "S100a8", "Kit")
+features <- c("Cd79a", "Jchain", "Cd4", "Cd8a", "Foxp3", "Trdc", "Ncr1", "Top2a",
+              "Gata3", "C1qb", "Apoe", "Inhba", "Vcan", "Cd14", 
+              "Clec9a", "Siglech", "Csf3r", "Kit")
 DotPlot(seu, group.by = "celltype", features = features) + RotatedAxis()
-ggsave("dotplot.png", path = plot_path, width = 6, height = 4, units = "in", dpi = 150)
+ggsave("dotplot.png", path = plot_path, width = 7, height = 4.5, units = "in", dpi = 150)
 
-# group celltype for further sub-clustering ----
-seu$immgroup <- ""
-seu$immgroup[seu$celltype %in% c("Bcell", "Plasma")] <- "Bcells"
-seu$immgroup[seu$celltype %in% c("CD4-T", "CD8-T", "Treg", "gdT", "NK", "Prolif.T", "ILC2")] <- "T&NK"
-seu$immgroup[seu$celltype %in% c("Macro.", "TAM", "Mono.", "cDC", "pDC", "TAN", "Mast")] <- "Myeloids"
-seu$immgroup <- factor(seu$immgroup, levels = c("Bcells", "T&NK", "Myeloids"))
-DimPlot(seu, group.by = "immgroup", cols = "polychrome", label = TRUE, repel = TRUE) + NoAxes() +
-  guides(color = guide_legend(override.aes = list(size = 3, alpha = 1), ncol = 1))
-ggsave("immgroup.png", path = plot_path, width = 3.5, height = 3, units = "in", dpi = 150)
+# # group celltype for further sub-clustering ----
+# seu$immgroup <- ""
+# seu$immgroup[seu$celltype %in% c("Bcell", "Plasma")] <- "Bcells"
+# seu$immgroup[seu$celltype %in% c("CD4-T", "CD8-T", "Treg", "gdT", "NK", "Prolif.T", "ILC2")] <- "T&NK"
+# seu$immgroup[seu$celltype %in% c("Macro.", "TAM", "Mono.", "cDC", "pDC", "TAN", "Mast")] <- "Myeloids"
+# seu$immgroup <- factor(seu$immgroup, levels = c("Bcells", "T&NK", "Myeloids"))
+# DimPlot(seu, group.by = "immgroup", cols = "polychrome", label = TRUE, repel = TRUE) + NoAxes() +
+#   guides(color = guide_legend(override.aes = list(size = 3, alpha = 1), ncol = 1))
+# ggsave("immgroup.png", path = plot_path, width = 3.5, height = 3, units = "in", dpi = 150)
 
-saveRDS(seu, file = file.path("RDSfiles", "seu_030.1_imm.RDS"))
+saveRDS(seu, file = file.path("RDSfiles", "seu_030.2_imm.RDS"))

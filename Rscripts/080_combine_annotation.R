@@ -43,7 +43,7 @@ save_fp <- function(feature, seu, path){
 # Add annotation ----
 ## Load annotated seurat objects
 epi <- readRDS(file.path("RDSfiles", "seu_020.1_epi.RDS"))
-imm <- readRDS(file.path("RDSfiles", "seu_030.1_imm.RDS"))
+imm <- readRDS(file.path("RDSfiles", "seu_030.2_imm.RDS"))
 str <- readRDS(file.path("RDSfiles", "seu_040.1_str.RDS"))
 epi_PC_PTC <- readRDS(file.path("RDSfiles", "seu_021.1_epi_PC&PTC.RDS"))
 endo <- readRDS(file.path("RDSfiles", "seu_041.1_endothelial.RDS"))
@@ -116,10 +116,10 @@ fs::dir_create(c(fp_path))
 # markers <- FindAllMarkers(seu, only.pos = TRUE)
 # 
 # seu <- recluster(seu, npcs = 50, res = 2)
-DimPlot(seu, label = TRUE, repel = TRUE, cols = "polychrome") + NoAxes() +
-  guides(color = guide_legend(override.aes = list(size = 3, alpha = 1), ncol = 3))
+# DimPlot(seu, label = TRUE, repel = TRUE, cols = "polychrome") + NoAxes() +
+#   guides(color = guide_legend(override.aes = list(size = 3, alpha = 1), ncol = 3))
 # ggsave("cluster_res2.png", path = plot_path, width = 5, height = 3, units = "in", dpi = 150)
 
-add_feat <- "Lrg1"
+add_feat <- "F11r"
 FeaturePlot(seu, features = add_feat, cols = c("lightgrey","darkred")) + NoAxes() + NoLegend()
 ggsave(paste0(add_feat, ".png"), path = fp_path, width = 3, height = 3, units = "in", dpi = 150)

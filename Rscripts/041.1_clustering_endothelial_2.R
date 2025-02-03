@@ -178,3 +178,9 @@ Idents(seu) <- "celltype_2"
 DimPlot(seu, label = FALSE, repel = TRUE, cols = "alphabet") & NoAxes() & 
   guides(color = guide_legend(override.aes = list(size = 3, alpha = 1), ncol = 2))
 ggsave("celltype_2_whole_epi.png", path = plot_path, width = 5, height = 3, units = "in", dpi = 150)
+
+
+# EDA ----
+add_feat <- "Acvr1"
+FeaturePlot(seu, features = add_feat, cols = c("lightgrey","darkred")) + NoAxes() + NoLegend()
+ggsave(paste0(add_feat, ".png"), path = fp_path, width = 3, height = 3, units = "in", dpi = 150)

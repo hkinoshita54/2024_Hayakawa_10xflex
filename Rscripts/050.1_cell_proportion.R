@@ -84,7 +84,7 @@ ggsave(paste0(fraction, "_num.png"), path = plot_path, width = 2.8, height = 3.2
 
 # Immune ----
 fraction <- "imm"
-seu <- readRDS(file.path("RDSfiles", "seu_030.1_imm.RDS"))
+seu <- readRDS(file.path("RDSfiles", "seu_030.2_imm.RDS"))
 nclust <- length(levels(seu$celltype))
 props <- getTransformedProps(clusters = seu$celltype, sample = seu$orig.ident)
 
