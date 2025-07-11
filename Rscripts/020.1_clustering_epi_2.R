@@ -79,7 +79,7 @@ DimPlot(seu, label = TRUE, repel = TRUE, cols = "polychrome") + NoAxes() +
   guides(color = guide_legend(override.aes = list(size = 3, alpha = 1), ncol = 3))
 ggsave("cluster_res2.png", path = plot_path, width = 5, height = 3, units = "in", dpi = 150)
 
-add_feat <- "Sh3bgrl3"
+add_feat <- "Il6"
 FeaturePlot(seu, features = add_feat, cols = c("lightgrey","darkred")) + NoAxes() + NoLegend()
 ggsave(paste0(add_feat, ".png"), path = fp_path, width = 3, height = 3, units = "in", dpi = 150)
 
