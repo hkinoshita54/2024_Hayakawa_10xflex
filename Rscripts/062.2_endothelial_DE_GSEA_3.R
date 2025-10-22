@@ -51,7 +51,7 @@ seu$gt_ct <- factor(seu$gt_ct, levels = gt_ct_lev)
 # DE----
 ## set groups for DE analysis
 seu$de_group <- ""
-seu$de_group[seu$celltype_2 %in% c("TumEC1", "TumEC2")] <- "test" 
+seu$de_group[seu$celltype_2 %in% c("TumEC")] <- "test" 
 seu$de_group[seu$celltype_2 %in% c("CapEC")] <- "ref"
 seu$de_group <- factor(seu$de_group, levels = c("ref", "test"))
 

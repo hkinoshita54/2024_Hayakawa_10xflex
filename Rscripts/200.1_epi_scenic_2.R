@@ -52,7 +52,7 @@ fp_path <- file.path("plot", analysis_step, "feature_plot")
 fs::dir_create(fp_path)
 DefaultAssay(seu) <-"scenicAUC"
 
-add_feat <- "Sox4(+)"
+add_feat <- "Smad4(+)"
 FeaturePlot(seu, features = add_feat, cols = c("lightgrey","darkred"), 
             # min.cutoff = "q25", max.cutoff = "q75"
 ) + NoAxes() + NoLegend()

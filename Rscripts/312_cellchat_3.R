@@ -114,3 +114,36 @@ ggsave(paste0("bubble_TAM_T", ".png"), path = plot_path, width = 4, height = 4, 
 netVisual_bubble(cellchat, remove.isolate = T, 
                  sources.use = c("Treg",  "gdT"), targets.use = c("TAM1", "TAM2", "Mono1",  "Mono2", "TAN"))
 ggsave(paste0("bubble_T_Mye", ".png"), path = plot_path, width = 4, height = 3, units = "in", dpi = 300)
+
+# TAN related 20250618
+netVisual_bubble(cellchat, remove.isolate = T, 
+                 sources.use = c("PTC"), targets.use = c("TAN"))
+ggsave(paste0("bubble_Tum_to_TAN", ".png"), path = plot_path, width = 3, height = 4, units = "in", dpi = 300)
+
+netVisual_bubble(cellchat, remove.isolate = T, 
+                 sources.use = c("iCAF",  "myoCAF", "matCAF"), targets.use = c("TAN"))
+ggsave(paste0("bubble_CAF_to_TAN", ".png"), path = plot_path, width = 4, height = 3, units = "in", dpi = 300)
+
+netVisual_bubble(cellchat, remove.isolate = T, 
+                 sources.use = c("TAN"), targets.use = c("CD4-T", "CD8-T", "Treg", "gdT", "NK", "ILC2"))
+ggsave(paste0("bubble_TAN_to_Tcells", ".png"), path = plot_path, width = 3, height = 2, units = "in", dpi = 300)
+
+netVisual_bubble(cellchat, remove.isolate = T, 
+                 sources.use = c("TAN"), targets.use = c("TAM1", "TAM2", "Mono1",  "Mono2"))
+ggsave(paste0("bubble_TAN_to_Mye", ".png"), path = plot_path, width = 4, height = 3, units = "in", dpi = 300)
+
+netVisual_bubble(cellchat, remove.isolate = T, 
+                 sources.use = c("TAN"), targets.use = c("Bcell"))
+ggsave(paste0("bubble_TAN_to_Bcells", ".png"), path = plot_path, width = 3, height = 3, units = "in", dpi = 300)
+
+netVisual_bubble(cellchat, remove.isolate = T, 
+                 sources.use = c("TAN"), targets.use = c("TumEC", "Prolif.EC", "TumLEC"))
+ggsave(paste0("bubble_TAN_to_EC", ".png"), path = plot_path, width = 4, height = 3, units = "in", dpi = 300)
+
+netVisual_bubble(cellchat, remove.isolate = T, 
+                 sources.use = c("TAN"), targets.use = c("iCAF",  "myoCAF", "matCAF"))
+ggsave(paste0("bubble_TAN_to_CAF", ".png"), path = plot_path, width = 4, height = 3, units = "in", dpi = 300)
+
+netVisual_bubble(cellchat, remove.isolate = T, 
+                 sources.use = c("TAN"), targets.use = c("PTC"))
+ggsave(paste0("bubble_TAN_to_Tum", ".png"), path = plot_path, width = 3, height = 3, units = "in", dpi = 300)

@@ -89,7 +89,7 @@ names(H) <- gsub("-", "_", names(H))
 
 # ssGSEA ----
 seu_all <- seu
-seu <- subset(seu_all, subset = celltype_3 %in% c("ArtEC", "VenEC", "CapEC", "TumEC", "Prolif.EC"))
+seu <- subset(seu_all, subset = celltype_2 %in% c("ArtEC", "VenEC", "CapEC", "TumEC", "Prolif.EC"))
 seu <- runEscape(seu, method = "ssGSEA", gene.sets = H,
                  groups = 5000, min.size = 15, new.assay.name = "ssGSEA_H",
                  BPPARAM = SnowParam(workers = 2))
@@ -108,12 +108,13 @@ ggsave("GSEA_H_hm.png", path = plot_path, width = 5, height = 8, units = "in", d
 
 
 # ssGSEA without Prolif.EC ----
-seu <- subset(seu_all, subset = celltype_3 %in% c("ArtEC", "VenEC", "CapEC", "TumEC"))
+seu <- subset(seu_all, subset = celltype_2 %in% c("ArtEC", "VenEC", "CapEC", "TumEC"))
 seu <- runEscape(seu, method = "ssGSEA", gene.sets = H,
                  groups = 5000, min.size = 15, new.assay.name = "ssGSEA_H",
                  BPPARAM = SnowParam(workers = 2))
 seu <- performNormalization(seu, assay = "ssGSEA_H", gene.sets = H, 
-                            scale.factor = seu$nFeature_RNA)
+                            # scale.factor = seu$nFeature_RNA
+                            )
 
 gs_H <- FindAllMarkers(seu, assay = "ssGSEA_H_normalized", min.pct = 0, logfc.threshold = 0)
 openxlsx2::write_xlsx(gs_H, file.path(res_path, "NoProlifEC_ssGSEA_H.xlsx"))
@@ -124,3 +125,16 @@ heatmapEnrichment(seu, group.by = "ident", assay = "ssGSEA_H_normalized", gene.s
   theme(axis.text.x = element_text(angle = 90, vjust=0.5, hjust=0),
         legend.position = "right", legend.direction = "vertical")
 ggsave("NoProlifEC_GSEA_H_hm.png", path = plot_path, width = 5, height = 8, units = "in", dpi = 150)
+
+# plot heatmap
+heatmapEnrichment(seu, group.by = "ident", assay = "ssGSEA_H", gene.set.use = "all",
+                  scale = TRUE, cluster.rows = TRUE, cluster.columns = TRUE) +
+  theme(axis.text.x = element_text(angle = 90, vjust=0.5, hjust=0),
+        legend.position = "right", legend.direction = "vertical")
+ggsave("NoProlifEC_GSEA_H_hm_wo_normalization.png", path = plot_path, width = 5, height = 8, units = "in", dpi = 150)
+
+
+
+add_feat <- "Icam1"
+FeaturePlot(seu, features = add_feat, cols = c("lightgrey","darkred")) + NoAxes() + NoLegend()
+ggsave(paste0(add_feat, ".png"), path = fp_path, width = 3, height = 3, units = "in", dpi = 150)

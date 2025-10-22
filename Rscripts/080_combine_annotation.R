@@ -120,6 +120,6 @@ fs::dir_create(c(fp_path))
 #   guides(color = guide_legend(override.aes = list(size = 3, alpha = 1), ncol = 3))
 # ggsave("cluster_res2.png", path = plot_path, width = 5, height = 3, units = "in", dpi = 150)
 
-add_feat <- "F11r"
+add_feat <- "Trem1"
 FeaturePlot(seu, features = add_feat, cols = c("lightgrey","darkred")) + NoAxes() + NoLegend()
 ggsave(paste0(add_feat, ".png"), path = fp_path, width = 3, height = 3, units = "in", dpi = 150)

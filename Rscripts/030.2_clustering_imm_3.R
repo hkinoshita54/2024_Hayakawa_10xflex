@@ -51,7 +51,7 @@ DimPlot(seu, group.by = "celltype", label = TRUE, repel = TRUE, cols = "polychro
 # adjust resolution
 seu <- FindClusters(seu, resolution = 3, verbose = FALSE)
 DimPlot(seu, label = TRUE, repel = TRUE, cols = "polychrome") + NoAxes() +
-  guides(color = guide_legend(override.aes = list(size = 3, alpha = 1), ncol = 3))
+  guides(color = guide_legend(override.aes = list(size = 3, alpha = 1), ncol = 2))
 ggsave("cluster.png", path = plot_path, width = 4.5, height = 3, units = "in", dpi = 150)
 DimPlot(seu, group.by = "orig.ident") + NoAxes()
 ggsave("sample.png", path = plot_path, width = 3.5, height = 3, units = "in", dpi = 150)
@@ -63,7 +63,7 @@ fs::dir_create(c(fp_path))
 # features <- readLines(file.path("aux_data", "gene_set", "annotation", "02_imm_markers.txt"))
 # sapply(features, save_fp, seu, fp_path)
 
-add_feat <- "Ctla4"
+add_feat <- "Cxcr4"
 FeaturePlot(seu, features = add_feat, cols = c("lightgrey","darkred")) + NoAxes() + NoLegend()
 ggsave(paste0(add_feat, ".png"), path = fp_path, width = 3, height = 3, units = "in", dpi = 150)
 
@@ -114,3 +114,6 @@ ggsave("dotplot.png", path = plot_path, width = 7, height = 4.5, units = "in", d
 # ggsave("immgroup.png", path = plot_path, width = 3.5, height = 3, units = "in", dpi = 150)
 
 saveRDS(seu, file = file.path("RDSfiles", "seu_030.2_imm.RDS"))
+
+markers <- FindAllMarkers(seu, only.pos = TRUE)
+top_markers <- filter(markers, cluster == "TAN") %>% arrange(p_val) %>% pull(gene) %>% head(20)

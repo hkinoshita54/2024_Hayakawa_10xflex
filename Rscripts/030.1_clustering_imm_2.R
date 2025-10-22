@@ -74,7 +74,7 @@ sapply(features, save_fp, seu, fp_path)
 features <- readLines(file.path("aux_data", "gene_set", "annotation", "additional_imm_markers.txt"))
 sapply(features, save_fp, seu, fp_path)
 
-add_feat <- "Inhba"
+add_feat <- "Eng"
 FeaturePlot(seu, features = add_feat, cols = c("lightgrey","darkred")) + NoAxes() + NoLegend()
 ggsave(paste0(add_feat, ".png"), path = fp_path, width = 3, height = 3, units = "in", dpi = 150)
 
