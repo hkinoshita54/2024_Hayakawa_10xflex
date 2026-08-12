@@ -3,10 +3,12 @@ analysis_step <- "000_SoupX"
 # https://cellgeni.github.io/notebooks/html/new-10kPBMC-SoupX.html
 
 # load packages ----
+library(tidyverse)
+library(ggplot2)
 library(Seurat)
 library(SoupX)
 library(DropletUtils)
-library(ggplot2)
+
 
 # helper functions ----
 cluster = function(seu_obj, npcs = 30, res = 0.8){
@@ -52,6 +54,10 @@ head(soup.channel$soupProfile[order(soup.channel$soupProfile$est, decreasing = T
 adj.matrix  <- adjustCounts(soup.channel, roundToInt = T)
 DropletUtils:::write10xCounts(file.path(out_path, paste0(sample_names[1], "_soupX_filt")), adj.matrix)
 
+## store soup.channel to check conatmination fraction later
+sc_list <- list()
+sc_list[[1]] <- soup.channel
+
 # Sanity checks ----
 # following below
 # https://rawcdn.githack.com/constantAmateur/SoupX/204b602418df12e9fdb4b68775a8b486c6504fe4/inst/doc/pbmcTutorial.html
@@ -88,6 +94,22 @@ for (i in 2:length(sample_names)) {
   # head(soup.channel$soupProfile[order(soup.channel$soupProfile$est, decreasing = T), ], n = 20)
   
   ## write out the adjusted matrix
-  adj.matrix  <- adjustCounts(soup.channel, roundToInt = T)
-  DropletUtils:::write10xCounts(file.path(out_path, paste0(sample_names[i], "_soupX_filt")), adj.matrix)
+  # adj.matrix  <- adjustCounts(soup.channel, roundToInt = T)
+  # DropletUtils:::write10xCounts(file.path(out_path, paste0(sample_names[i], "_soupX_filt")), adj.matrix)
+  
+  ## store soup.channel to check conatmination fraction later
+  sc_list[[i]] <- soup.channel
 }
+
+# check contamination fractions
+genes_of_interest <- c("Lrg1", "Reg3g", "Reg3b", "Cxcl5", "Saa1", "Saa2")
+sc_list[[1]]$soupProfile[genes_of_interest, ] # WT
+sc_list[[2]]$soupProfile[genes_of_interest, ] # PT
+sc_list[[3]]$soupProfile[genes_of_interest, ] # PC
+sc_list[[4]]$soupProfile[genes_of_interest, ] # PTC
+
+head(sc_list[[1]]$soupProfile[order(sc_list[[1]]$soupProfile$est, decreasing = TRUE), ], 30) # WT
+head(sc_list[[2]]$soupProfile[order(sc_list[[2]]$soupProfile$est, decreasing = TRUE), ], 30) # PT
+head(sc_list[[3]]$soupProfile[order(sc_list[[3]]$soupProfile$est, decreasing = TRUE), ], 30) # PC
+head(sc_list[[4]]$soupProfile[order(sc_list[[4]]$soupProfile$est, decreasing = TRUE), ], 30) # PTC
+

@@ -105,8 +105,9 @@ names(H) <- gsub("-", "_", names(H))
 seu <- runEscape(seu, method = "ssGSEA", gene.sets = H,
                  groups = 5000, min.size = 15, new.assay.name = "ssGSEA_H",
                  BPPARAM = SnowParam(workers = 2))
-seu <- performNormalization(seu, assay = "ssGSEA_H", gene.sets = H, 
-                            scale.factor = seu$nFeature_RNA)
+# Escape's normalization should not be applied to already normalized data
+# seu <- performNormalization(seu, assay = "ssGSEA_H", gene.sets = H, 
+#                             scale.factor = seu$nFeature_RNA)
 
 gs_H <- FindAllMarkers(seu, assay = "ssGSEA_H_normalized", min.pct = 0, logfc.threshold = 0)
 openxlsx2::write_xlsx(gs_H, file.path(res_path, "ssGSEA_H.xlsx"))

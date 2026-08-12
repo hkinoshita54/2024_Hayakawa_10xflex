@@ -9,7 +9,8 @@ library(Seurat)
 # fs::dir_create(c("plot", "result", "RDSfiles", "Rscripts"))
 plot_path <- file.path("plot", analysis_step)
 res_path <- file.path("result", analysis_step)
-fs::dir_create(c(plot_path, res_path))
+fp_path <- file.path(plot_path, "feature_plot")
+fs::dir_create(c(plot_path, res_path, fp_path))
 
 # Helper functions ----
 cluster = function(seu_obj, npcs, res){
@@ -40,19 +41,20 @@ save_fp <- function(feature, seu, path){
   }, error = function(e){cat("ERROR :", conditionMessage(e), "\n")})
 }
 
-# Clustering ----
+# Load data ----
 seu <- readRDS(file.path("RDSfiles", "seu_010_filt.RDS"))
+pal <- readRDS("RDSfiles/color_palette.RDS")
 
+# Clustering ----
 seu <- cluster(seu, npcs = 50, res = 1)
 DimPlot(seu, label = TRUE, repel = TRUE, cols = "polychrome") + NoAxes() +
   guides(color = guide_legend(override.aes = list(size = 3, alpha = 1), ncol = 3))
 ggsave("cluster.png", path = plot_path, width = 5, height = 3, units = "in", dpi = 150) 
-DimPlot(seu, group.by = "orig.ident") + NoAxes()
+DimPlot(seu, group.by = "orig.ident", cols = pal$genotype4) & NoAxes()
 ggsave("sample.png", path = plot_path, width = 4, height = 3, units = "in", dpi = 150)
 markers <- FindAllMarkers(seu, only.pos = TRUE)
 
-fp_path <- file.path(plot_path, "feature_plot")
-fs::dir_create(c(fp_path))
+# Feature plots ----
 files <- list.files(path = file.path("aux_data", "gene_set", "annotation"), pattern = ".txt", full.names = TRUE)
 features <- lapply(files, FUN = readLines) %>% unlist()
 sapply(features, save_fp, seu, fp_path)
@@ -67,7 +69,7 @@ seu$cellgroup <- "Epi."
 seu$cellgroup[imm_names] <- "Imm."
 seu$cellgroup[str_names] <- "Str."
 seu$cellgroup <- factor(seu$cellgroup, levels = c("Epi.", "Imm.", "Str."))
-DimPlot(seu, group.by = "cellgroup") & NoAxes()
+DimPlot(seu, group.by = "cellgroup", cols = pal$cellgroup) & NoAxes()
 ggsave("cellgroup.png", path = plot_path, width = 4, height = 3, units = "in", dpi = 150)
 
 # Dot plot
